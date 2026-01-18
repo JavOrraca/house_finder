@@ -1,0 +1,156 @@
+{
+  "cities": [
+    {
+      "id": "los-angeles",
+      "name": "Los Angeles",
+      "state": "CA",
+      "aliases": ["la", "l.a.", "los angeles", "hollywood", "dtla", "downtown la"],
+      "center": { "lat": 34.0522, "lng": -118.2437 },
+      "zoom": 10
+    },
+    {
+      "id": "san-diego",
+      "name": "San Diego",
+      "state": "CA",
+      "aliases": ["sd", "san diego"],
+      "center": { "lat": 32.7157, "lng": -117.1611 },
+      "zoom": 11
+    },
+    {
+      "id": "orange-county",
+      "name": "Orange County",
+      "state": "CA",
+      "aliases": ["oc", "orange county", "irvine", "anaheim", "santa ana", "costa mesa"],
+      "center": { "lat": 33.7175, "lng": -117.8311 },
+      "zoom": 10
+    },
+    {
+      "id": "san-francisco",
+      "name": "San Francisco",
+      "state": "CA",
+      "aliases": ["sf", "san francisco", "san fran", "frisco", "bay area"],
+      "center": { "lat": 37.7749, "lng": -122.4194 },
+      "zoom": 12
+    },
+    {
+      "id": "sacramento",
+      "name": "Sacramento",
+      "state": "CA",
+      "aliases": ["sac", "sacramento", "sactown"],
+      "center": { "lat": 38.5816, "lng": -121.4944 },
+      "zoom": 11
+    },
+    {
+      "id": "san-jose",
+      "name": "San Jose",
+      "state": "CA",
+      "aliases": ["sj", "san jose", "south bay"],
+      "center": { "lat": 37.3382, "lng": -121.8863 },
+      "zoom": 11
+    },
+    {
+      "id": "seattle",
+      "name": "Seattle",
+      "state": "WA",
+      "aliases": ["seattle", "sea"],
+      "center": { "lat": 47.6062, "lng": -122.3321 },
+      "zoom": 11
+    },
+    {
+      "id": "portland",
+      "name": "Portland",
+      "state": "OR",
+      "aliases": ["portland", "pdx"],
+      "center": { "lat": 45.5152, "lng": -122.6784 },
+      "zoom": 11
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "state": "IL",
+      "aliases": ["chicago", "chi", "chi-town", "windy city"],
+      "center": { "lat": 41.8781, "lng": -87.6298 },
+      "zoom": 11
+    },
+    {
+      "id": "atlanta",
+      "name": "Atlanta",
+      "state": "GA",
+      "aliases": ["atlanta", "atl"],
+      "center": { "lat": 33.7490, "lng": -84.3880 },
+      "zoom": 11
+    },
+    {
+      "id": "austin",
+      "name": "Austin",
+      "state": "TX",
+      "aliases": ["austin", "atx"],
+      "center": { "lat": 30.2672, "lng": -97.7431 },
+      "zoom": 11
+    },
+    {
+      "id": "houston",
+      "name": "Houston",
+      "state": "TX",
+      "aliases": ["houston", "hou", "h-town"],
+      "center": { "lat": 29.7604, "lng": -95.3698 },
+      "zoom": 10
+    },
+    {
+      "id": "dallas-fort-worth",
+      "name": "Dallas/Fort Worth",
+      "state": "TX",
+      "aliases": ["dallas", "dfw", "fort worth", "ft worth", "d-town", "dallas fort worth"],
+      "center": { "lat": 32.7767, "lng": -96.7970 },
+      "zoom": 10
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas",
+      "state": "NV",
+      "aliases": ["vegas", "las vegas", "lv", "sin city"],
+      "center": { "lat": 36.1699, "lng": -115.1398 },
+      "zoom": 11
+    },
+    {
+      "id": "miami",
+      "name": "Miami",
+      "state": "FL",
+      "aliases": ["miami", "mia", "south beach"],
+      "center": { "lat": 25.7617, "lng": -80.1918 },
+      "zoom": 11
+    },
+    {
+      "id": "tampa-bay",
+      "name": "Tampa Bay",
+      "state": "FL",
+      "aliases": ["tampa", "tampa bay", "st pete", "st petersburg"],
+      "center": { "lat": 27.9506, "lng": -82.4572 },
+      "zoom": 10
+    },
+    {
+      "id": "orlando",
+      "name": "Orlando",
+      "state": "FL",
+      "aliases": ["orlando", "orl"],
+      "center": { "lat": 28.5383, "lng": -81.3792 },
+      "zoom": 11
+    },
+    {
+      "id": "denver",
+      "name": "Denver",
+      "state": "CO",
+      "aliases": ["denver", "den", "mile high"],
+      "center": { "lat": 39.7392, "lng": -104.9903 },
+      "zoom": 11
+    },
+    {
+      "id": "new-york-city",
+      "name": "New York City",
+      "state": "NY",
+      "aliases": ["nyc", "new york", "ny", "manhattan", "brooklyn", "queens", "new york city"],
+      "center": { "lat": 40.7128, "lng": -74.0060 },
+      "zoom": 11
+    }
+  ]
+}

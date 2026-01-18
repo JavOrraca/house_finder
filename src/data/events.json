@@ -1,0 +1,311 @@
+{
+  "lastUpdated": "2026-01-17T12:00:00Z",
+  "events": [
+    {
+      "id": "evt_la_001",
+      "name": "Substance at Sound",
+      "venue": {
+        "name": "Sound Nightclub",
+        "address": "1642 N Las Palmas Ave, Los Angeles, CA 90028",
+        "lat": 34.1010,
+        "lng": -118.3351
+      },
+      "artists": ["Solomun"],
+      "promoters": ["Insomniac"],
+      "datetime": "2026-01-25T22:00:00-08:00",
+      "endTime": "2026-01-26T04:00:00-08:00",
+      "cost": "$40-$80",
+      "link": "https://soundnightclub.com",
+      "city": "los-angeles"
+    },
+    {
+      "id": "evt_la_002",
+      "name": "Factory 93 presents Amelie Lens",
+      "venue": {
+        "name": "Exchange LA",
+        "address": "618 S Spring St, Los Angeles, CA 90014",
+        "lat": 34.0456,
+        "lng": -118.2514
+      },
+      "artists": ["Amelie Lens", "Airod"],
+      "promoters": ["Factory 93", "Insomniac"],
+      "datetime": "2026-02-01T21:00:00-08:00",
+      "endTime": "2026-02-02T04:00:00-08:00",
+      "cost": "$45-$95",
+      "link": "https://exchangela.com",
+      "city": "los-angeles"
+    },
+    {
+      "id": "evt_la_003",
+      "name": "Day Trip Festival",
+      "venue": {
+        "name": "Los Angeles State Historic Park",
+        "address": "1245 N Spring St, Los Angeles, CA 90012",
+        "lat": 34.0667,
+        "lng": -118.2283
+      },
+      "artists": ["Carl Cox", "Fisher", "John Summit"],
+      "promoters": ["Insomniac"],
+      "datetime": "2026-02-15T12:00:00-08:00",
+      "endTime": "2026-02-15T22:00:00-08:00",
+      "cost": "$125-$250",
+      "link": "https://daytripfestival.com",
+      "city": "los-angeles"
+    },
+    {
+      "id": "evt_sf_001",
+      "name": "Dirtybird Takeover",
+      "venue": {
+        "name": "Public Works",
+        "address": "161 Erie St, San Francisco, CA 94103",
+        "lat": 37.7694,
+        "lng": -122.4117
+      },
+      "artists": ["Claude VonStroke", "Justin Martin"],
+      "promoters": ["Dirtybird"],
+      "datetime": "2026-01-31T21:00:00-08:00",
+      "endTime": "2026-02-01T03:00:00-08:00",
+      "cost": "$35-$60",
+      "link": "https://publicsf.com",
+      "city": "san-francisco"
+    },
+    {
+      "id": "evt_sf_002",
+      "name": "Honey Soundsystem",
+      "venue": {
+        "name": "The Stud",
+        "address": "399 9th St, San Francisco, CA 94103",
+        "lat": 37.7713,
+        "lng": -122.4103
+      },
+      "artists": ["Honey DJs", "Guests TBA"],
+      "promoters": ["Honey Soundsystem"],
+      "datetime": "2026-02-08T22:00:00-08:00",
+      "endTime": "2026-02-09T04:00:00-08:00",
+      "cost": "$20",
+      "link": "https://honeysoundsystem.com",
+      "city": "san-francisco"
+    },
+    {
+      "id": "evt_chi_001",
+      "name": "Queen! at Smartbar",
+      "venue": {
+        "name": "Smartbar Chicago",
+        "address": "3730 N Clark St, Chicago, IL 60613",
+        "lat": 41.9495,
+        "lng": -87.6525
+      },
+      "artists": ["Derrick Carter", "Michael Serafini"],
+      "promoters": ["Smartbar"],
+      "datetime": "2026-01-24T22:00:00-06:00",
+      "endTime": "2026-01-25T04:00:00-06:00",
+      "cost": "$15-$25",
+      "link": "https://smartbarchicago.com",
+      "city": "chicago"
+    },
+    {
+      "id": "evt_chi_002",
+      "name": "Spybar Saturday",
+      "venue": {
+        "name": "Spybar",
+        "address": "646 N Franklin St, Chicago, IL 60654",
+        "lat": 41.8936,
+        "lng": -87.6354
+      },
+      "artists": ["Gene Farris"],
+      "promoters": ["Spybar"],
+      "datetime": "2026-02-01T22:00:00-06:00",
+      "endTime": "2026-02-02T04:00:00-06:00",
+      "cost": "$20-$30",
+      "link": "https://spybarchicago.com",
+      "city": "chicago"
+    },
+    {
+      "id": "evt_nyc_001",
+      "name": "Nowadays Sunday Service",
+      "venue": {
+        "name": "Nowadays",
+        "address": "56-06 Cooper Ave, Queens, NY 11385",
+        "lat": 40.7103,
+        "lng": -73.8975
+      },
+      "artists": ["Various DJs"],
+      "promoters": ["Nowadays"],
+      "datetime": "2026-01-26T14:00:00-05:00",
+      "endTime": "2026-01-26T22:00:00-05:00",
+      "cost": "$15",
+      "link": "https://nowadays.nyc",
+      "city": "new-york-city"
+    },
+    {
+      "id": "evt_nyc_002",
+      "name": "Basement at Output",
+      "venue": {
+        "name": "Basement Brooklyn",
+        "address": "74 Wythe Ave, Brooklyn, NY 11249",
+        "lat": 40.7216,
+        "lng": -73.9577
+      },
+      "artists": ["Mochakk", "Dennis Cruz"],
+      "promoters": ["Output"],
+      "datetime": "2026-02-07T23:00:00-05:00",
+      "endTime": "2026-02-08T06:00:00-05:00",
+      "cost": "$30-$50",
+      "link": "https://outputclub.com",
+      "city": "new-york-city"
+    },
+    {
+      "id": "evt_miami_001",
+      "name": "Space Terrace Saturday",
+      "venue": {
+        "name": "Club Space Miami",
+        "address": "34 NE 11th St, Miami, FL 33132",
+        "lat": 25.7864,
+        "lng": -80.1918
+      },
+      "artists": ["Marco Carola"],
+      "promoters": ["Club Space"],
+      "datetime": "2026-01-25T23:00:00-05:00",
+      "endTime": "2026-01-26T11:00:00-05:00",
+      "cost": "$40-$80",
+      "link": "https://clubspace.com",
+      "city": "miami"
+    },
+    {
+      "id": "evt_miami_002",
+      "name": "Floyd Miami",
+      "venue": {
+        "name": "Floyd Miami",
+        "address": "34 NE 11th St, Miami, FL 33132",
+        "lat": 25.7866,
+        "lng": -80.1916
+      },
+      "artists": ["Ben UFO"],
+      "promoters": ["Floyd"],
+      "datetime": "2026-02-14T22:00:00-05:00",
+      "endTime": "2026-02-15T06:00:00-05:00",
+      "cost": "$35-$55",
+      "link": "https://floydmiami.com",
+      "city": "miami"
+    },
+    {
+      "id": "evt_denver_001",
+      "name": "Temple Denver presents Eli Brown",
+      "venue": {
+        "name": "Temple Denver",
+        "address": "1136 Broadway, Denver, CO 80203",
+        "lat": 39.7339,
+        "lng": -104.9875
+      },
+      "artists": ["Eli Brown"],
+      "promoters": ["Temple Denver"],
+      "datetime": "2026-02-08T21:00:00-07:00",
+      "endTime": "2026-02-09T02:00:00-07:00",
+      "cost": "$35-$65",
+      "link": "https://templedenver.com",
+      "city": "denver"
+    },
+    {
+      "id": "evt_austin_001",
+      "name": "Kingdom Austin",
+      "venue": {
+        "name": "Kingdom Austin",
+        "address": "501 E 7th St, Austin, TX 78701",
+        "lat": 30.2674,
+        "lng": -97.7369
+      },
+      "artists": ["Green Velvet"],
+      "promoters": ["Kingdom"],
+      "datetime": "2026-02-01T22:00:00-06:00",
+      "endTime": "2026-02-02T04:00:00-06:00",
+      "cost": "$30-$50",
+      "link": "https://kingdomaustin.com",
+      "city": "austin"
+    },
+    {
+      "id": "evt_seattle_001",
+      "name": "Re-bar Saturday",
+      "venue": {
+        "name": "Re-bar",
+        "address": "1114 Howell St, Seattle, WA 98101",
+        "lat": 47.6153,
+        "lng": -122.3286
+      },
+      "artists": ["Local Residents"],
+      "promoters": ["Re-bar"],
+      "datetime": "2026-01-25T21:00:00-08:00",
+      "endTime": "2026-01-26T02:00:00-08:00",
+      "cost": "$15-$20",
+      "link": "https://rebarseattle.com",
+      "city": "seattle"
+    },
+    {
+      "id": "evt_vegas_001",
+      "name": "Zedd at XS",
+      "venue": {
+        "name": "XS Nightclub",
+        "address": "3131 S Las Vegas Blvd, Las Vegas, NV 89109",
+        "lat": 36.1269,
+        "lng": -115.1653
+      },
+      "artists": ["Zedd"],
+      "promoters": ["Wynn Nightlife"],
+      "datetime": "2026-02-14T22:00:00-08:00",
+      "endTime": "2026-02-15T04:00:00-08:00",
+      "cost": "$75-$150",
+      "link": "https://xslasvegas.com",
+      "city": "las-vegas"
+    },
+    {
+      "id": "evt_sd_001",
+      "name": "Spin at OMNIA",
+      "venue": {
+        "name": "OMNIA San Diego",
+        "address": "454 6th Ave, San Diego, CA 92101",
+        "lat": 32.7148,
+        "lng": -117.1597
+      },
+      "artists": ["Valentino Khan"],
+      "promoters": ["Hakkasan Group"],
+      "datetime": "2026-02-07T21:00:00-08:00",
+      "endTime": "2026-02-08T02:00:00-08:00",
+      "cost": "$30-$60",
+      "link": "https://omniaclubs.com/san-diego",
+      "city": "san-diego"
+    },
+    {
+      "id": "evt_atl_001",
+      "name": "Ravine Atlanta",
+      "venue": {
+        "name": "Ravine Atlanta",
+        "address": "1021 Peachtree St NE, Atlanta, GA 30309",
+        "lat": 33.7847,
+        "lng": -84.3841
+      },
+      "artists": ["Vintage Culture"],
+      "promoters": ["Ravine"],
+      "datetime": "2026-02-15T22:00:00-05:00",
+      "endTime": "2026-02-16T04:00:00-05:00",
+      "cost": "$35-$70",
+      "link": "https://ravineatlanta.com",
+      "city": "atlanta"
+    },
+    {
+      "id": "evt_portland_001",
+      "name": "Holocene Saturday",
+      "venue": {
+        "name": "Holocene",
+        "address": "1001 SE Morrison St, Portland, OR 97214",
+        "lat": 45.5162,
+        "lng": -122.6545
+      },
+      "artists": ["Resident DJs"],
+      "promoters": ["Holocene"],
+      "datetime": "2026-02-01T21:00:00-08:00",
+      "endTime": "2026-02-02T02:30:00-08:00",
+      "cost": "$15",
+      "link": "https://holocene.org",
+      "city": "portland"
+    }
+  ]
+}

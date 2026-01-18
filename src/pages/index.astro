@@ -1,0 +1,672 @@
+---
+import Layout from '../layouts/Layout.astro';
+import citiesData from '../data/cities.json';
+import eventsData from '../data/events.json';
+---
+
+<Layout title="HOUSE_FINDER">
+  <div class="terminal-wrapper">
+    <div class="terminal">
+      <!-- Terminal Header -->
+      <div class="terminal-header">
+        <div class="terminal-title">HOUSE_FINDER</div>
+        <div class="terminal-controls">
+          <button class="terminal-control">_</button>
+          <button class="terminal-control">□</button>
+          <button class="terminal-control">X</button>
+        </div>
+      </div>
+
+      <!-- Terminal Body -->
+      <div class="terminal-body">
+        <!-- Boot Sequence -->
+        <div id="boot-sequence">
+          <div class="terminal-line system type-in">> INITIALIZING HOUSE_FINDER PROTOCOL...</div>
+          <div class="terminal-line system type-in" style="animation-delay: 0.3s">> CONNECTING TO EVENT DATABASE...</div>
+          <div class="terminal-line success type-in" style="animation-delay: 0.6s">> SYSTEM READY</div>
+        </div>
+
+        <!-- City Input Section -->
+        <div id="city-section" class="input-section fade-in" style="animation-delay: 0.9s">
+          <div class="input-wrapper">
+            <span class="input-label">CITY?</span>
+            <input
+              type="text"
+              id="city-input"
+              class="input-field"
+              placeholder="enter city name..."
+              autocomplete="off"
+              autofocus
+            />
+          </div>
+          <div class="input-hint">
+            [Examples: LA, chicago, NYC, miami, SF, denver, seattle]
+          </div>
+        </div>
+
+        <!-- City Disambiguation -->
+        <div id="city-list" class="city-list hidden">
+          <div class="terminal-line system">> MULTIPLE MATCHES DETECTED</div>
+          <div class="city-list-title">SELECT CITY:</div>
+          <div id="city-options"></div>
+          <div class="input-wrapper" style="margin-top: 16px">
+            <span class="input-label">ENTER #</span>
+            <input
+              type="text"
+              id="city-select-input"
+              class="input-field"
+              placeholder="1-9"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <!-- Date Input Section -->
+        <div id="date-section" class="input-section hidden">
+          <div class="terminal-line system">> CITY: <span id="selected-city-display" class="text-primary"></span></div>
+          <div class="terminal-line system">> SCANNING LOCAL FREQUENCIES...</div>
+          <div class="input-wrapper" style="margin-top: 16px">
+            <span class="input-label">WHEN?</span>
+            <input
+              type="text"
+              id="date-input"
+              class="input-field"
+              placeholder="enter date..."
+              autocomplete="off"
+            />
+          </div>
+          <div class="input-hint">
+            [Examples: today, tonight, tomorrow, this weekend, next friday, jan 25]
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="results-section hidden">
+          <div class="results-header">
+            <div class="results-info">
+              <div class="results-city">> <span id="results-city"></span></div>
+              <div class="results-date">> DATE: <span id="results-date"></span></div>
+              <div class="results-count">> EVENTS FOUND: <span id="results-total">0</span> (<span id="results-night">0</span> NIGHT / <span id="results-day">0</span> DAY)</div>
+            </div>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="ALL">[ALL]</button>
+              <button class="filter-btn" data-filter="NIGHT">[NIGHT]</button>
+              <button class="filter-btn" data-filter="DAY">[DAY]</button>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div id="map" class="map-container loading"></div>
+
+          <!-- Event List -->
+          <div id="event-list"></div>
+
+          <!-- No Results -->
+          <div id="no-results" class="no-results hidden">
+            <div class="no-results-icon">[ ]</div>
+            <div>NO EVENTS FOUND FOR SELECTED CRITERIA</div>
+            <div class="text-dim">Try a different date range</div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div id="nav-section" class="nav-buttons hidden">
+          <button id="new-search-btn" class="nav-btn">[NEW SEARCH]</button>
+          <button id="change-date-btn" class="nav-btn">[CHANGE DATE]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store data for client-side use -->
+  <script define:vars={{ citiesData, eventsData }}>
+    window.__CITIES_DATA__ = citiesData;
+    window.__EVENTS_DATA__ = eventsData;
+  </script>
+
+  <!-- Main Application Script -->
+  <script>
+    import * as chrono from 'chrono-node';
+
+    // Types
+    interface City {
+      id: string;
+      name: string;
+      state: string;
+      aliases: string[];
+      center: { lat: number; lng: number };
+      zoom: number;
+    }
+
+    interface Event {
+      id: string;
+      name: string;
+      venue: {
+        name: string;
+        address: string;
+        lat: number;
+        lng: number;
+      };
+      artists: string[];
+      promoters: string[];
+      datetime: string;
+      endTime?: string;
+      cost: string;
+      link: string;
+      city: string;
+    }
+
+    type TimeOfDay = 'DAY' | 'NIGHT';
+    type Filter = TimeOfDay | 'ALL';
+
+    // Get data from window
+    const citiesData: { cities: City[] } = (window as any).__CITIES_DATA__;
+    const eventsData: { events: Event[] } = (window as any).__EVENTS_DATA__;
+
+    // State
+    let selectedCity: City | null = null;
+    let matchedCities: City[] = [];
+    let dateRange: { start: Date; end: Date } | null = null;
+    let filteredEvents: Event[] = [];
+    let currentFilter: Filter = 'ALL';
+    let map: L.Map | null = null;
+    let markers: L.Marker[] = [];
+
+    // DOM Elements
+    const citySection = document.getElementById('city-section')!;
+    const cityInput = document.getElementById('city-input') as HTMLInputElement;
+    const cityList = document.getElementById('city-list')!;
+    const cityOptions = document.getElementById('city-options')!;
+    const citySelectInput = document.getElementById('city-select-input') as HTMLInputElement;
+    const dateSection = document.getElementById('date-section')!;
+    const dateInput = document.getElementById('date-input') as HTMLInputElement;
+    const selectedCityDisplay = document.getElementById('selected-city-display')!;
+    const resultsSection = document.getElementById('results-section')!;
+    const resultsCity = document.getElementById('results-city')!;
+    const resultsDate = document.getElementById('results-date')!;
+    const resultsTotal = document.getElementById('results-total')!;
+    const resultsDay = document.getElementById('results-day')!;
+    const resultsNight = document.getElementById('results-night')!;
+    const mapContainer = document.getElementById('map')!;
+    const eventList = document.getElementById('event-list')!;
+    const noResults = document.getElementById('no-results')!;
+    const navSection = document.getElementById('nav-section')!;
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const newSearchBtn = document.getElementById('new-search-btn')!;
+    const changeDateBtn = document.getElementById('change-date-btn')!;
+
+    // City Matching
+    function matchCity(input: string): { type: 'exact' | 'multiple' | 'none'; cities: City[] } {
+      const normalizedInput = input.toLowerCase().trim();
+      if (!normalizedInput) return { type: 'none', cities: [] };
+
+      const cities = citiesData.cities;
+
+      // Exact alias match
+      const exactMatches = cities.filter(city =>
+        city.aliases.some(alias => alias.toLowerCase() === normalizedInput)
+      );
+
+      if (exactMatches.length === 1) return { type: 'exact', cities: exactMatches };
+      if (exactMatches.length > 1) return { type: 'multiple', cities: exactMatches };
+
+      // Partial match
+      const partialMatches = cities.filter(city =>
+        city.aliases.some(alias =>
+          alias.toLowerCase().includes(normalizedInput) ||
+          normalizedInput.includes(alias.toLowerCase())
+        ) ||
+        city.name.toLowerCase().includes(normalizedInput)
+      );
+
+      if (partialMatches.length === 1) return { type: 'exact', cities: partialMatches };
+      if (partialMatches.length > 1) return { type: 'multiple', cities: partialMatches };
+
+      return { type: 'none', cities: [] };
+    }
+
+    // Date Parsing
+    function parseNaturalDate(input: string): { start: Date; end: Date } | null {
+      const ref = new Date();
+      const normalizedInput = input.toLowerCase().trim();
+
+      const startOfDay = (d: Date) => { const n = new Date(d); n.setHours(0, 0, 0, 0); return n; };
+      const endOfDay = (d: Date) => { const n = new Date(d); n.setHours(23, 59, 59, 999); return n; };
+      const addDays = (d: Date, days: number) => { const n = new Date(d); n.setDate(n.getDate() + days); return n; };
+      const setHours = (d: Date, h: number) => { const n = new Date(d); n.setHours(h, 0, 0, 0); return n; };
+
+      const getNextDayOfWeek = (d: Date, dayOfWeek: number) => {
+        const n = new Date(d);
+        let diff = dayOfWeek - n.getDay();
+        if (diff < 0) diff += 7;
+        n.setDate(n.getDate() + diff);
+        return startOfDay(n);
+      };
+
+      if (normalizedInput === 'today') {
+        return { start: startOfDay(ref), end: endOfDay(ref) };
+      }
+
+      if (normalizedInput === 'tonight') {
+        return { start: setHours(ref, 18), end: setHours(addDays(ref, 1), 6) };
+      }
+
+      if (normalizedInput === 'tomorrow') {
+        const tomorrow = addDays(ref, 1);
+        return { start: startOfDay(tomorrow), end: endOfDay(tomorrow) };
+      }
+
+      if (normalizedInput === 'this weekend' || normalizedInput === 'weekend') {
+        const friday = getNextDayOfWeek(ref, 5);
+        return { start: setHours(friday, 18), end: setHours(addDays(friday, 3), 6) };
+      }
+
+      if (normalizedInput === 'next weekend') {
+        let friday = getNextDayOfWeek(ref, 5);
+        friday = addDays(friday, 7);
+        return { start: setHours(friday, 18), end: setHours(addDays(friday, 3), 6) };
+      }
+
+      // Fallback to chrono-node
+      const parsed = chrono.parse(input, ref);
+      if (parsed.length === 0) return null;
+
+      const result = parsed[0];
+      const start = result.start.date();
+      const end = result.end ? result.end.date() : endOfDay(start);
+      return { start, end };
+    }
+
+    // Event Classification
+    function classifyEvent(event: Event): TimeOfDay {
+      const hour = new Date(event.datetime).getHours();
+      return (hour >= 6 && hour < 18) ? 'DAY' : 'NIGHT';
+    }
+
+    // Filter Events
+    function filterEvents(cityId: string, range: { start: Date; end: Date }, filter: Filter): Event[] {
+      return eventsData.events
+        .filter(e => e.city === cityId)
+        .filter(e => {
+          const eventDate = new Date(e.datetime);
+          return eventDate >= range.start && eventDate <= range.end;
+        })
+        .filter(e => filter === 'ALL' || classifyEvent(e) === filter)
+        .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+    }
+
+    // Format Time
+    function formatEventTime(event: Event): string {
+      const start = new Date(event.datetime);
+      const end = event.endTime ? new Date(event.endTime) : null;
+
+      const dateStr = start.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const startTime = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      if (end) {
+        const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `${dateStr} | ${startTime} - ${endTime}`;
+      }
+      return `${dateStr} | ${startTime}`;
+    }
+
+    // Format Date Range
+    function formatDateRange(range: { start: Date; end: Date }): string {
+      const opts: Intl.DateTimeFormatOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+      const startStr = range.start.toLocaleDateString('en-US', opts);
+      const endStr = range.end.toLocaleDateString('en-US', opts);
+      return startStr === endStr ? startStr.toUpperCase() : `${startStr} - ${endStr}`.toUpperCase();
+    }
+
+    // Render City Options
+    function renderCityOptions(cities: City[]) {
+      cityOptions.innerHTML = cities.map((city, i) => `
+        <div class="city-option" data-index="${i}">
+          <span class="city-option-number">[${i + 1}]</span>
+          <span class="city-option-name">${city.name}, ${city.state}</span>
+        </div>
+      `).join('');
+
+      cityOptions.querySelectorAll('.city-option').forEach(el => {
+        el.addEventListener('click', () => {
+          const index = parseInt(el.getAttribute('data-index')!);
+          selectCity(cities[index]);
+        });
+      });
+    }
+
+    // Render Event Card
+    function renderEventCard(event: Event): string {
+      const timeOfDay = classifyEvent(event);
+      return `
+        <div class="event-card">
+          <div class="event-header">
+            <span class="event-name">${event.name}</span>
+            <span class="event-badge ${timeOfDay.toLowerCase()}">[${timeOfDay}]</span>
+          </div>
+          <div class="event-details">
+            <div class="event-row">
+              <span class="event-label">VENUE:</span>
+              <span class="event-value">${event.venue.name}</span>
+            </div>
+            <div class="event-row address">
+              <span class="event-value text-dim">${event.venue.address}</span>
+            </div>
+            <div class="event-row">
+              <span class="event-label">ARTISTS:</span>
+              <span class="event-value">${event.artists.join(', ')}</span>
+            </div>
+            <div class="event-row">
+              <span class="event-label">PROMOTER:</span>
+              <span class="event-value">${event.promoters.join(', ')}</span>
+            </div>
+            <div class="event-row">
+              <span class="event-label">TIME:</span>
+              <span class="event-value">${formatEventTime(event)}</span>
+            </div>
+            <div class="event-row">
+              <span class="event-label">COST:</span>
+              <span class="event-value">${event.cost}</span>
+            </div>
+            <div class="event-row">
+              <a href="${event.link}" target="_blank" rel="noopener noreferrer" class="event-link">[MORE INFO →]</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize Map
+    function initMap(center: [number, number], zoom: number) {
+      if (map) {
+        map.remove();
+      }
+
+      mapContainer.classList.add('loading');
+
+      map = L.map('map', {
+        center,
+        zoom,
+        zoomControl: true
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
+
+      map.on('load', () => {
+        mapContainer.classList.remove('loading');
+      });
+
+      setTimeout(() => {
+        mapContainer.classList.remove('loading');
+        map?.invalidateSize();
+      }, 500);
+    }
+
+    // Add Markers
+    function addMarkers(events: Event[]) {
+      markers.forEach(m => m.remove());
+      markers = [];
+
+      if (!map) return;
+
+      const redIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div class="marker-pin"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      events.forEach(event => {
+        if (event.venue.lat && event.venue.lng) {
+          const marker = L.marker([event.venue.lat, event.venue.lng], { icon: redIcon })
+            .addTo(map!)
+            .bindPopup(`
+              <strong>${event.name}</strong><br>
+              ${event.venue.name}<br>
+              <em>${formatEventTime(event)}</em>
+            `);
+          markers.push(marker);
+        }
+      });
+
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      }
+    }
+
+    // Show Results
+    function showResults() {
+      if (!selectedCity || !dateRange) return;
+
+      filteredEvents = filterEvents(selectedCity.id, dateRange, currentFilter);
+      const allEvents = filterEvents(selectedCity.id, dateRange, 'ALL');
+      const dayCount = allEvents.filter(e => classifyEvent(e) === 'DAY').length;
+      const nightCount = allEvents.filter(e => classifyEvent(e) === 'NIGHT').length;
+
+      resultsCity.textContent = `${selectedCity.name}, ${selectedCity.state}`;
+      resultsDate.textContent = formatDateRange(dateRange);
+      resultsTotal.textContent = allEvents.length.toString();
+      resultsDay.textContent = dayCount.toString();
+      resultsNight.textContent = nightCount.toString();
+
+      // Render events or show no results
+      if (filteredEvents.length > 0) {
+        eventList.innerHTML = filteredEvents.map(renderEventCard).join('');
+        noResults.classList.add('hidden');
+        addMarkers(filteredEvents);
+      } else {
+        eventList.innerHTML = '';
+        noResults.classList.remove('hidden');
+        addMarkers([]);
+      }
+
+      resultsSection.classList.remove('hidden');
+      navSection.classList.remove('hidden');
+    }
+
+    // Select City
+    function selectCity(city: City) {
+      selectedCity = city;
+      selectedCityDisplay.textContent = `${city.name}, ${city.state}`;
+
+      citySection.classList.add('hidden');
+      cityList.classList.add('hidden');
+      dateSection.classList.remove('hidden');
+      dateInput.focus();
+
+      initMap([city.center.lat, city.center.lng], city.zoom);
+    }
+
+    // Reset to City Input
+    function resetToCity() {
+      selectedCity = null;
+      matchedCities = [];
+      dateRange = null;
+      filteredEvents = [];
+      currentFilter = 'ALL';
+
+      citySection.classList.remove('hidden');
+      cityInput.value = '';
+      cityList.classList.add('hidden');
+      dateSection.classList.add('hidden');
+      dateInput.value = '';
+      resultsSection.classList.add('hidden');
+      navSection.classList.add('hidden');
+
+      filterButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === 'ALL');
+      });
+
+      cityInput.focus();
+    }
+
+    // Reset to Date Input
+    function resetToDate() {
+      dateRange = null;
+      filteredEvents = [];
+      currentFilter = 'ALL';
+
+      dateSection.classList.remove('hidden');
+      dateInput.value = '';
+      resultsSection.classList.add('hidden');
+      navSection.classList.add('hidden');
+
+      filterButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === 'ALL');
+      });
+
+      dateInput.focus();
+    }
+
+    // Event Listeners
+    cityInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const result = matchCity(cityInput.value);
+
+        if (result.type === 'exact') {
+          selectCity(result.cities[0]);
+        } else if (result.type === 'multiple') {
+          matchedCities = result.cities;
+          renderCityOptions(result.cities);
+          citySection.classList.add('hidden');
+          cityList.classList.remove('hidden');
+          citySelectInput.focus();
+        } else {
+          // Show all cities
+          matchedCities = citiesData.cities;
+          renderCityOptions(citiesData.cities);
+          citySection.classList.add('hidden');
+          cityList.classList.remove('hidden');
+          citySelectInput.focus();
+        }
+      }
+    });
+
+    citySelectInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const num = parseInt(citySelectInput.value);
+        if (num >= 1 && num <= matchedCities.length) {
+          selectCity(matchedCities[num - 1]);
+        }
+      }
+    });
+
+    dateInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const parsed = parseNaturalDate(dateInput.value);
+        if (parsed) {
+          dateRange = parsed;
+          dateSection.classList.add('hidden');
+          showResults();
+        }
+      }
+    });
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.getAttribute('data-filter') as Filter;
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showResults();
+      });
+    });
+
+    newSearchBtn.addEventListener('click', resetToCity);
+    changeDateBtn.addEventListener('click', resetToDate);
+
+    // Add event card styles dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+      .event-card {
+        border: var(--border-width) solid var(--color-primary);
+        margin-bottom: 16px;
+        background: rgba(255, 51, 51, 0.02);
+      }
+
+      .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: var(--border-width) solid var(--color-primary);
+        background: rgba(255, 51, 51, 0.05);
+      }
+
+      .event-name {
+        color: var(--color-primary);
+        font-size: var(--font-size-large);
+        text-transform: uppercase;
+      }
+
+      .event-badge {
+        font-size: var(--font-size-small);
+        padding: 2px 8px;
+        border: var(--border-width) solid currentColor;
+      }
+
+      .event-badge.night {
+        color: var(--color-primary);
+      }
+
+      .event-badge.day {
+        color: var(--color-warning);
+      }
+
+      .event-details {
+        padding: 16px;
+      }
+
+      .event-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .event-row.address {
+        margin-top: -8px;
+        margin-left: 80px;
+      }
+
+      .event-label {
+        color: var(--color-text-dim);
+        min-width: 80px;
+        flex-shrink: 0;
+      }
+
+      .event-value {
+        color: var(--color-text);
+      }
+
+      .event-link {
+        color: var(--color-primary);
+        margin-top: 8px;
+        display: inline-block;
+      }
+
+      .event-link:hover {
+        text-shadow: 0 0 8px var(--color-primary-glow);
+      }
+
+      @media (max-width: 480px) {
+        .event-row {
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .event-row.address {
+          margin-left: 0;
+        }
+
+        .event-label {
+          min-width: auto;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</Layout>
